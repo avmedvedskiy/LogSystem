@@ -1,0 +1,11 @@
+{
+  "name": "com.avmedvedskiy.logsystem",
+  "displayName": "Log System",
+  "version": "1.0.6",
+  "unity": "2018.4",
+  "author": "avmedvedskiy",
+  "description": "Save log from unity to text files on Device",
+  "keywords": [
+    "common","logs"
+  ]
+}
