@@ -15,7 +15,7 @@ namespace LogSystem
         //     ///
         //     LogType used for Errors.
         //     ///
-        Error = 0 << 1,
+        Error = 0,
         //
         // Summary:
         //     ///
@@ -57,7 +57,7 @@ namespace LogSystem
         [Range(1,5)]
         public int sessionsCount = 5;
         
-        public LogType supportLogTypes;
+        public LogType supportLogTypes = LogType.Error | LogType.Exception | LogType.Log;
 
     }
 }
