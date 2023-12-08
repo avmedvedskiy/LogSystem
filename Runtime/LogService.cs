@@ -94,10 +94,12 @@ namespace LogSystem
 
         void HandleLog(string logString, string stackTrace, UnityEngine.LogType type)
         {
+            /*
             int unityLogType = (1 << (int)type);
             int aType = (int)LogSettings.supportLogTypes;
             if ((aType & unityLogType) != unityLogType)
                 return;
+            */
 
             if (StreamWriter != null)
                 StreamWriter.WriteLine(LOG_FORMAT, type, logString, stackTrace, Time.realtimeSinceStartup);

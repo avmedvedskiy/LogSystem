@@ -57,7 +57,7 @@ namespace LogSystem
         [Range(1,5)]
         public int sessionsCount = 5;
         
-        public LogType supportLogTypes = LogType.Error | LogType.Exception | LogType.Log;
+        //public LogType supportLogTypes = LogType.Error | LogType.Exception | LogType.Log;
 
     }
 }
