@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -26,8 +27,15 @@ namespace LogSystem
                 {
                     using var request = _requestFactory.CreateRequest(bytes, fileName);
                     Debug.Log($"Start send log {fileName} {request.url}");
-                    await request.SendWebRequest();
-                    Debug.Log($"Send done {fileName} {request.result} {request.error}");
+                    try
+                    {
+                        await request.SendWebRequest();
+                        Debug.Log($"Send done {fileName}");
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogException(e);
+                    }
                 }
             }
         }
