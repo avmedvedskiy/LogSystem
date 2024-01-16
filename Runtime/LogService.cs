@@ -1,18 +1,22 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 
 namespace LogSystem
 {
     public class LogService : MonoBehaviour
     {
+        private const string SEPARATOR = "\t";
+        private const string NEW_LINE = "\r\n";
         const string LOG_SETTINGS_FILE_NAME = "LogSettings";
         const string FOLDER_PATH = "{0}/Logs";
         const string PATH_FORMAT = "{0}/Logs/log{1}.txt";
-        const string LOG_FORMAT = "{3}\t{0} {1}\n{2}";
-        //const string SERVER_URL_FORMAT = "{0}v2/send/log/{1}_{2}";
         const int CURRENT_SESSION_NUMBER = 0;
 
+        private StringBuilder _builder;
         private LogSettings LogSettings { get; set; }
         private StreamWriter StreamWriter { get; set; }
 
@@ -23,6 +27,7 @@ namespace LogSystem
             return;
 #endif
 
+            _builder = new StringBuilder();
             LogSettings = Resources.Load(LOG_SETTINGS_FILE_NAME) as LogSettings;
             if (LogSettings == null)
                 LogSettings = ScriptableObject.CreateInstance<LogSettings>();
@@ -36,7 +41,7 @@ namespace LogSystem
             for (int i = sessionsCount; i >= 0; i--)
             {
                 string path = string.Format(PATH_FORMAT, Application.persistentDataPath, i);
-                if(File.Exists(path))
+                if (File.Exists(path))
                 {
                     string newPath = string.Format(PATH_FORMAT, Application.persistentDataPath, i + 1);
                     File.Delete(newPath);
@@ -55,13 +60,14 @@ namespace LogSystem
             {
                 yield return filePath;
             }
+
             OpenStream();
         }
 
         void OnEnable()
         {
             Application.logMessageReceived += HandleLog;
-		}
+        }
 
         void OnDisable()
         {
@@ -73,7 +79,7 @@ namespace LogSystem
         {
             if (!this.enabled)
                 return;
-			
+
             StreamWriter?.Flush();
         }
 
@@ -89,20 +95,26 @@ namespace LogSystem
 
         void OpenStream()
         {
-            StreamWriter = new StreamWriter(string.Format(PATH_FORMAT, Application.persistentDataPath, CURRENT_SESSION_NUMBER), true);
+            StreamWriter =
+                new StreamWriter(string.Format(PATH_FORMAT, Application.persistentDataPath, CURRENT_SESSION_NUMBER),
+                    true);
         }
 
         void HandleLog(string logString, string stackTrace, UnityEngine.LogType type)
         {
-            /*
-            int unityLogType = (1 << (int)type);
-            int aType = (int)LogSettings.supportLogTypes;
-            if ((aType & unityLogType) != unityLogType)
+            if(StreamWriter == null)
                 return;
-            */
 
-            if (StreamWriter != null)
-                StreamWriter.WriteLine(LOG_FORMAT, type, logString, stackTrace, Time.realtimeSinceStartup);
+            _builder
+                .Append(Time.realtimeSinceStartup)
+                .Append(SEPARATOR)
+                .Append(type)
+                .Append(logString)
+                .Append(NEW_LINE)
+                .Append(stackTrace);
+            
+            StreamWriter.WriteLine(_builder.ToString());
+            _builder.Clear();
         }
     }
 }
