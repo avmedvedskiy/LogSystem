@@ -1,10 +1,9 @@
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 
 namespace LogSystem
 {
     public interface ILogSenderService
     {
-        bool InProgress { get;}
-        Task SendAsync();
+        UniTask SendAsync();
     }
 }

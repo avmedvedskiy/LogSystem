@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
@@ -9,15 +7,15 @@ namespace LogSystem
 {
     public class LogService : MonoBehaviour
     {
-        private const string SEPARATOR = "\t";
-        private const string NEW_LINE = "\r\n";
+        const string SEPARATOR = "\t";
+        const string NEW_LINE = "\r\n";
         const string LOG_SETTINGS_FILE_NAME = "LogSettings";
         const string FOLDER_PATH = "{0}/Logs";
         const string PATH_FORMAT = "{0}/Logs/log{1}.txt";
         const int CURRENT_SESSION_NUMBER = 0;
 
+        [Range(1, 5)] [SerializeField] private int _sessionsCount = 3;
         private StringBuilder _builder;
-        private LogSettings LogSettings { get; set; }
         private StreamWriter StreamWriter { get; set; }
 
         void Awake()
@@ -28,17 +26,11 @@ namespace LogSystem
 #endif
 
             _builder = new StringBuilder();
-            LogSettings = Resources.Load(LOG_SETTINGS_FILE_NAME) as LogSettings;
-            if (LogSettings == null)
-                LogSettings = ScriptableObject.CreateInstance<LogSettings>();
-
-            enabled = LogSettings.enable;
-            int sessionsCount = LogSettings.sessionsCount - 1;
 
             string folderPath = string.Format(FOLDER_PATH, Application.persistentDataPath);
             Directory.CreateDirectory(folderPath);
 
-            for (int i = sessionsCount; i >= 0; i--)
+            for (int i = _sessionsCount - 1; i >= 0; i--)
             {
                 string path = string.Format(PATH_FORMAT, Application.persistentDataPath, i);
                 if (File.Exists(path))
@@ -77,10 +69,8 @@ namespace LogSystem
 
         void OnApplicationPause(bool pauseStatus)
         {
-            if (!this.enabled)
-                return;
-
-            StreamWriter?.Flush();
+            if (enabled)
+                StreamWriter?.Flush();
         }
 
         void CloseStream()
@@ -102,7 +92,7 @@ namespace LogSystem
 
         void HandleLog(string logString, string stackTrace, UnityEngine.LogType type)
         {
-            if(StreamWriter == null)
+            if (StreamWriter == null)
                 return;
 
             _builder
@@ -112,7 +102,7 @@ namespace LogSystem
                 .Append(logString)
                 .Append(NEW_LINE)
                 .Append(stackTrace);
-            
+
             StreamWriter.WriteLine(_builder.ToString());
             _builder.Clear();
         }

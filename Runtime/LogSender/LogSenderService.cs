@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace LogSystem
@@ -10,7 +11,7 @@ namespace LogSystem
         private readonly LogService _logService;
         private readonly ILogRequestFactory _requestFactory;
 
-        public bool InProgress { get; private set; }
+        private bool _inProgress;
 
         public LogSenderService(LogService logService, ILogRequestFactory requestFactory)
         {
@@ -18,9 +19,12 @@ namespace LogSystem
             _requestFactory = requestFactory;
         }
 
-        public async Task SendAsync()
+        public async UniTask SendAsync()
         {
-            InProgress = true;
+            if(_inProgress)
+                return;
+            
+            _inProgress = true;
             foreach (var filePath in _logService.GetFiles())
             {
                 var fileName = Path.GetFileName(filePath);
@@ -31,7 +35,7 @@ namespace LogSystem
                     Debug.Log($"Start send log {fileName} {request.url}");
                     try
                     {
-                        await request.SendWebRequest();
+                        await request.SendWebRequest().ToUniTask();
                         Debug.Log($"Send done {fileName}");
                     }
                     catch (Exception e)
@@ -41,7 +45,7 @@ namespace LogSystem
                     }
                 }
             }
-            InProgress = false;
+            _inProgress = false;
         }
     }
 }
