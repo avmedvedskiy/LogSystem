@@ -9,7 +9,8 @@ namespace LogSystem
     {
         private readonly LogService _logService;
         private readonly ILogRequestFactory _requestFactory;
-        private bool _inProgress;
+
+        public bool InProgress { get; private set; }
 
         public LogSenderService(LogService logService, ILogRequestFactory requestFactory)
         {
@@ -19,6 +20,7 @@ namespace LogSystem
 
         public async Task SendAsync()
         {
+            InProgress = true;
             foreach (var filePath in _logService.GetFiles())
             {
                 var fileName = Path.GetFileName(filePath);
@@ -35,9 +37,11 @@ namespace LogSystem
                     catch (Exception e)
                     {
                         Debug.LogException(e);
+                        break;
                     }
                 }
             }
+            InProgress = false;
         }
     }
 }
