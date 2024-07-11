@@ -24,6 +24,7 @@ namespace LogSystem
             this.enabled = false;
             return;
 #endif
+            DontDestroyOnLoad(gameObject);
 
             _builder = new StringBuilder();
 
