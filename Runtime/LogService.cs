@@ -91,7 +91,7 @@ namespace LogSystem
                     true);
         }
 
-        void HandleLog(string logString, string stackTrace, UnityEngine.LogType type)
+        void HandleLog(string logString, string stackTrace, LogType type)
         {
             if (StreamWriter == null)
                 return;
