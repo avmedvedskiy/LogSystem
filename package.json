@@ -1,7 +1,7 @@
 {
   "name": "com.avmedvedskiy.logsystem",
   "displayName": "Services.LogSystem",
-  "version": "1.0.12",
+  "version": "1.1.0",
   "unity": "2018.4",
   "author": "avmedvedskiy",
   "description": "Save log from unity to text files on Device",
